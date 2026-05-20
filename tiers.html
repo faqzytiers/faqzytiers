@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faqzy Esports - Tiers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <nav class="navbar">
+        <div class="logo">Faqzy Esports</div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="tiers.html">Tiers</a></li>
+        </ul>
+        <div class="burger" id="burger">
+            <div></div><div></div><div></div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="hero hero-fade tier-hero">
+        <div class="hero-fade-bg"></div>
+        <div class="overlay"></div>
+        <div class="hero-content">
+            <h1>Faqzy Player Tiers</h1>
+            <p>Live tier cards generated from your Supabase player data. Mode icons are shown as placeholders for now.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>Active Players &amp; Tier Progress</h2>
+        <p class="tier-empty" id="tierSubtitle">Fetching the latest player tiers from Supabase...</p>
+        <div id="tierGrid" class="tier-grid"></div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2026 Faqzy Esports. All rights reserved.</p>
+</footer>
+
+<script src="script.js"></script>
+<script>
+const tierGrid = document.getElementById('tierGrid');
+const tierSubtitle = document.getElementById('tierSubtitle');
+const API_BASE_URL = window.location.origin;
+
+const TIER_PRIORITY = [
+  'Unranked',
+  'LT5', 'HT5',
+  'LT4', 'HT4',
+  'LT3', 'HT3',
+  'LT2', 'HT2',
+  'LT1', 'HT1'
+];
+
+function getTierScore(tierName) {
+  const idx = TIER_PRIORITY.indexOf(tierName);
+  return idx >= 0 ? idx : 0;
+}
+
+function getBestTier(tiers) {
+  if (!Array.isArray(tiers) || !tiers.length) {
+    return { tier: 'Unranked', gamemode: 'Unknown' };
+  }
+  return tiers.reduce((best, next) => {
+    if (!next || typeof next !== 'object') return best;
+    const currentScore = getTierScore(best.tier);
+    const nextScore = getTierScore(next.tier);
+    return nextScore > currentScore ? next : best;
+  }, { tier: 'Unranked', gamemode: 'Unknown' });
+}
+
+function renderModeChip(item) {
+  const mode = item?.gamemode || item?.mode || 'Unknown';
+  const tier = item?.tier || 'Unranked';
+  const iconText = mode.match(/\b([A-Z])/g)?.join('') || mode.slice(0, 2).toUpperCase();
+  return `
+    <span class="mode-pill">
+      <span class="mode-icon">${iconText}</span>
+      ${mode} • ${tier}
+    </span>
+  `;
+}
+
+function renderPlayerCard(player) {
+  const ign = player.ign || player.name || player.username || 'Unknown Player';
+  const region = player.region || 'Unknown Region';
+  const tiers = Array.isArray(player.tiers) ? player.tiers : [];
+  const best = getBestTier(tiers);
+  const description = tiers.length
+    ? `${tiers.length} gamemode${tiers.length === 1 ? '' : 's'} tracked`
+    : 'No tier results available yet.';
+
+  const modeChips = tiers.length
+    ? tiers.map(renderModeChip).join('')
+    : '<span class="tier-badge">No tiers yet</span>';
+
+  return `
+    <article class="tier-card">
+      <div class="tier-header">
+        <div>
+          <h3 class="tier-name">${ign}</h3>
+          <div class="tier-region">${region}</div>
+        </div>
+        <div class="tier-main-badge">${best.tier}</div>
+      </div>
+      <p class="tier-description">${description}</p>
+      <div class="tier-modes">${modeChips}</div>
+      <div class="tier-badges">
+        <span class="tier-badge">Top mode: ${best.gamemode}</span>
+        <span class="tier-badge">Best tier: ${best.tier}</span>
+      </div>
+    </article>
+  `;
+}
+
+async function loadTierData() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/players`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+
+    if (!data || !data.length) {
+      tierSubtitle.textContent = 'No tier data found. Make sure your Render backend is running and the Supabase table contains player rows.';
+      return;
+    }
+
+    tierSubtitle.textContent = `${data.length} players loaded from the backend.`;
+    const sorted = data.slice().sort((a, b) => {
+      const aBest = getBestTier(Array.isArray(a.tiers) ? a.tiers : []).tier;
+      const bBest = getBestTier(Array.isArray(b.tiers) ? b.tiers : []).tier;
+      return getTierScore(bBest) - getTierScore(aBest);
+    });
+
+    tierGrid.innerHTML = sorted.map(renderPlayerCard).join('');
+  } catch (err) {
+    console.error('Failed to load player tiers:', err);
+    tierSubtitle.textContent = 'Failed to load player tiers. Verify the backend URL and that your Render service is running.';
+    tierGrid.innerHTML = '<p class="tier-error">Unable to fetch tiers from the backend.</p>';
+  }
+}
+
+loadTierData();
+</script>
+
+const TIER_PRIORITY = [
+  'Unranked',
+  'LT5', 'HT5',
+  'LT4', 'HT4',
+  'LT3', 'HT3',
+  'LT2', 'HT2',
+  'LT1', 'HT1'
+];
+
+function getTierScore(tierName) {
+  const idx = TIER_PRIORITY.indexOf(tierName);
+  return idx >= 0 ? idx : 0;
+}
+
+function getBestTier(tiers) {
+  if (!Array.isArray(tiers) || !tiers.length) {
+    return { tier: 'Unranked', gamemode: 'Unknown' };
+  }
+  return tiers.reduce((best, next) => {
+    if (!next || typeof next !== 'object') return best;
+    const currentScore = getTierScore(best.tier);
+    const nextScore = getTierScore(next.tier);
+    return nextScore > currentScore ? next : best;
+  }, { tier: 'Unranked', gamemode: 'Unknown' });
+}
+
+function renderModeChip(item) {
+  const mode = item?.gamemode || item?.mode || 'Unknown';
+  const tier = item?.tier || 'Unranked';
+  const iconText = mode.match(/\b([A-Z])/g)?.join('') || mode.slice(0, 2).toUpperCase();
+  return `
+    <span class="mode-pill">
+      <span class="mode-icon">${iconText}</span>
+      ${mode} • ${tier}
+    </span>
+  `;
+}
+
+function renderPlayerCard(player) {
+  const ign = player.ign || player.name || player.username || 'Unknown Player';
+  const region = player.region || 'Unknown Region';
+  const tiers = Array.isArray(player.tiers) ? player.tiers : [];
+  const best = getBestTier(tiers);
+  const description = tiers.length
+    ? `${tiers.length} gamemode${tiers.length === 1 ? '' : 's'} tracked` 
+    : 'No tier results available yet.';
+
+  const modeChips = tiers.length
+    ? tiers.map(renderModeChip).join('')
+    : '<span class="tier-badge">No tiers yet</span>';
+
+  return `
+    <article class="tier-card">
+      <div class="tier-header">
+        <div>
+          <h3 class="tier-name">${ign}</h3>
+          <div class="tier-region">${region}</div>
+        </div>
+        <div class="tier-main-badge">${best.tier}</div>
+      </div>
+      <p class="tier-description">${description}</p>
+      <div class="tier-modes">${modeChips}</div>
+      <div class="tier-badges">
+        <span class="tier-badge">Top mode: ${best.gamemode}</span>
+        <span class="tier-badge">Best tier: ${best.tier}</span>
+      </div>
+    </article>
+  `;
+}
+
+async function loadTierData() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('players')
+      .select('ign, name, username, region, tiers');
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data || !data.length) {
+      tierSubtitle.textContent = 'No tier data found. Make sure the Supabase table is public and contains player rows.';
+      return;
+    }
+
+    tierSubtitle.textContent = `${data.length} players loaded from Supabase.`;
+    const sorted = data.slice().sort((a, b) => {
+      const aBest = getBestTier(Array.isArray(a.tiers) ? a.tiers : []).tier;
+      const bBest = getBestTier(Array.isArray(b.tiers) ? b.tiers : []).tier;
+      return getTierScore(bBest) - getTierScore(aBest);
+    });
+
+    tierGrid.innerHTML = sorted.map(renderPlayerCard).join('');
+  } catch (err) {
+    console.error('Failed to load player tiers:', err);
+    tierSubtitle.textContent = 'Failed to load player tiers. Check the console for details and verify your Supabase URL/key.';
+    tierGrid.innerHTML = '<p class="tier-error">Unable to fetch tiers from Supabase.</p>';
+  }
+}
+
+loadTierData();
+</script>
+</body>
+</html>
