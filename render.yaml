@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: Faqzy Esports Website
-    env: node
-    plan: starter
-    buildCommand: npm install
-    startCommand: npm start
