@@ -957,3 +957,10 @@ footer a {
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
 }
+
+.card,
+.row,
+.table,
+.container {
+  overflow: hidden !important;
+}
