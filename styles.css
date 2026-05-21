@@ -786,8 +786,8 @@ footer a {
   max-height: 1000px;
   margin: 0 auto;
   overflow-x: auto;
-  overflow-y: auto;
-  padding-bottom: 0.5rem;
+  overflow-y: visible;
+  padding-bottom: 2rem;
 }
 
 .ranking-row {
