@@ -546,6 +546,126 @@ footer a {
   margin-top: 2rem;
 }
 
+.mode-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1.75rem 0 1rem;
+}
+
+.mode-tab {
+  background: #111;
+  border: 1px solid #333;
+  color: #eee;
+  padding: 0.9rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 110px;
+  font-weight: 700;
+}
+
+.mode-tab.active,
+.mode-tab:hover {
+  background: #ff6600;
+  border-color: #ff6600;
+  color: #000;
+}
+
+.tier-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.tier-column {
+  background: rgba(17, 17, 17, 0.98);
+  border: 1px solid #222;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tier-column-header {
+  background: #111;
+  color: #ffb347;
+  text-align: center;
+  padding: 1rem 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.tier-column-body {
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tier-player {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: #0f0f0f;
+  border: 1px solid #222;
+  border-radius: 14px;
+  padding: 0.9rem;
+}
+
+.player-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.player-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #222;
+  color: #ff6600;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.player-gamemode {
+  color: #aaa;
+  font-size: 0.82rem;
+  margin-top: 0.2rem;
+}
+
+.tier-pill {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.82rem;
+  padding: 0.45rem 0.75rem;
+  white-space: nowrap;
+}
+
+.no-players {
+  color: #777;
+  text-align: center;
+  padding: 1rem 0.25rem;
+}
+
+@media (max-width: 1100px) {
+  .tier-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .tier-board {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tier-card {
   background: rgba(17, 17, 17, 0.96);
   border: 1px solid #222;
