@@ -51,7 +51,7 @@ const tierSubtitle = document.getElementById('tierSubtitle');
 const modeTabs = document.getElementById('modeTabs');
 const API_BASE_URL = window.location.origin;
 
-const DEFAULT_MODES = ['Overall', 'LTMs', 'Vanilla', 'UHC', 'Pot', 'NethOP', 'SMP', 'Sword', 'Axe', 'Mace'];
+const DEFAULT_MODES = ['Overall', 'Vanilla', 'UHC', 'Pot', 'NethOP', 'SMP', 'Sword', 'Axe', 'Mace'];
 const BOARD_TIERS = ['Tier 1', 'Tier 2', 'Tier 3', 'Tier 4', 'Tier 5'];
 const TIER_PRIORITY = [
   'Unranked',
@@ -163,42 +163,70 @@ function renderTierBoard(players, selectedMode) {
     return;
   }
 
-  const grouped = BOARD_TIERS.reduce((acc, tierName) => {
-    acc[tierName] = [];
-    return acc;
-  }, {});
+  if (selectedMode === 'Overall') {
+    // Overall tab shows ranked list layout
+    filtered.sort((a, b) => {
+      const bestA = getBestTier(Array.isArray(a.tiers) ? a.tiers : []);
+      const bestB = getBestTier(Array.isArray(b.tiers) ? b.tiers : []);
+      return getTierScore(bestB.tier) - getTierScore(bestA.tier);
+    });
 
-  filtered.forEach(player => {
-    let tierValue = 'Unranked';
-    const tiers = Array.isArray(player.tiers) ? player.tiers : [];
+    tierBoard.innerHTML = `<div class="overall-ranking">${filtered.map((player, index) => {
+      const ign = player.ign || player.name || player.username || 'Unknown Player';
+      const bestTier = getBestTier(Array.isArray(player.tiers) ? player.tiers : []);
+      const tierLabel = bestTier.tier || 'Unranked';
+      const arrow = getTierArrow(tierLabel);
+      return `
+        <article class="ranking-row">
+          <div class="ranking-number">${index + 1}.</div>
+          <div class="ranking-player">
+            <div class="player-avatar-lg">${ign.slice(0, 1).toUpperCase()}</div>
+            <div>
+              <strong>${ign}</strong>
+              <div class="player-info">Combat Master</div>
+            </div>
+          </div>
+          <div class="ranking-tiers">
+            ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<span class="tier-icon">⚔</span>`).join('')}
+          </div>
+          <div class="ranking-region">NA</div>
+          <span class="tier-pill">${arrow} ${tierLabel}</span>
+        </article>
+      `;
+    }).join('')}</div>`;
+  } else {
+    // Other tabs show tier column layout
+    const grouped = BOARD_TIERS.reduce((acc, tierName) => {
+      acc[tierName] = [];
+      return acc;
+    }, {});
 
-    if (selectedMode === 'Overall') {
-      tierValue = getBestTier(tiers).tier;
-    } else {
+    filtered.forEach(player => {
+      let tierValue = 'Unranked';
+      const tiers = Array.isArray(player.tiers) ? player.tiers : [];
       const playerModeTier = tiers.find(item => {
         const modeName = (item?.gamemode || item?.mode || '').toLowerCase();
         return modeName === selectedMode.toLowerCase();
       });
       tierValue = playerModeTier?.tier || 'Unranked';
-    }
+      const column = normalizeTierGroup(tierValue);
+      grouped[column].push(player);
+    });
 
-    const column = normalizeTierGroup(tierValue);
-    grouped[column].push(player);
-  });
+    tierBoard.innerHTML = BOARD_TIERS.map(tierName => {
+      const playersInTier = grouped[tierName];
+      const content = playersInTier.length
+        ? playersInTier.map(player => renderPlayerItem(player, selectedMode)).join('')
+        : '<div class="no-players">No players in this tier</div>';
 
-  tierBoard.innerHTML = BOARD_TIERS.map(tierName => {
-    const playersInTier = grouped[tierName];
-    const content = playersInTier.length
-      ? playersInTier.map(player => renderPlayerItem(player, selectedMode)).join('')
-      : '<div class="no-players">No players in this tier</div>';
-
-    return `
-      <div class="tier-column">
-        <div class="tier-column-header">${tierName}</div>
-        <div class="tier-column-body">${content}</div>
-      </div>
-    `;
-  }).join('');
+      return `
+        <div class="tier-column">
+          <div class="tier-column-header">${tierName}</div>
+          <div class="tier-column-body">${content}</div>
+        </div>
+      `;
+    }).join('');
+  }
 }
 
 function setupModeTabs(players) {
