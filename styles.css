@@ -579,13 +579,16 @@ footer a {
   gap: 1.5rem;
   margin-top: 1rem;
   max-height: 1000px;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: visible;
   padding-right: 0.5rem;
 }
 
 .tier-board.overall-active {
   display: block;
   grid-template-columns: none;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
 .tier-column {
