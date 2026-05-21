@@ -672,13 +672,13 @@ footer a {
     grid-template-columns: 1fr;
   }
   .ranking-tiers {
-    margin: 20px 0;
+    margin: 20px 0 !important;
   }
   .ranking-row {
-    width: 300px;
-    min-width: 300px;
-    max-width: 300px;
-    display: block;
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+    display: block !important;
   }
 }
 
