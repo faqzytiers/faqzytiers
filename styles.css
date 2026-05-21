@@ -965,3 +965,19 @@ footer a {
 .container {
   overflow: visible !important;
 }
+
+.ranking-row {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.ranking-row:hover {
+  z-index: 9999 !important;
+}
+
+.tier-icon:hover {
+  background: #ff6600 !important;
+  color: #000 !important;
+  transform: scale(1.1) !important;
+  z-index: 10000 !important;
+}
