@@ -592,7 +592,7 @@ footer a {
   background: rgba(17, 17, 17, 0.98);
   border: 1px solid #222;
   border-radius: 18px;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
 }

@@ -125,7 +125,7 @@ function getTierArrow(tier) {
 }
 
 function getTierArrowIcon(tier) {
-  if (/^HT/i.test(tier)) return '<i class="fas fa-angles-up"></i>';
+  if (/^HT/i.test(tier)) return '<i class="fas fa-angle-double-up"></i>';
   if (/^LT/i.test(tier)) return '<i class="fas fa-angle-up"></i>';
   return '<i class="fas fa-circle"></i>';
 }
@@ -263,7 +263,7 @@ function renderTierBoard(players, selectedMode) {
         const iconContent = iconUrl
           ? `<img src="${iconUrl}" alt="${gamemode}" class="tier-icon-img">`
           : '⚔';
-        return `<span class="tier-icon" data-tooltip="${gamemode}: ${tierValue} — ${tierPoints} pts">${iconContent}</span>`;
+        return `<span class="tier-icon" data-tooltip="${tierValue}">${iconContent}</span>`;
       }).join('');
       
       const region = (player.region || player.Region || player.region?.toString() || 'Unknown').toUpperCase();
