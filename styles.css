@@ -583,6 +583,11 @@ footer a {
   padding-right: 0.5rem;
 }
 
+.tier-board.overall-active {
+  display: block;
+  grid-template-columns: none;
+}
+
 .tier-column {
   background: rgba(17, 17, 17, 0.98);
   border: 1px solid #222;

@@ -28,13 +28,13 @@
         <div class="overlay"></div>
         <div class="hero-content">
             <h1>FaqzyTiers</h1>
-            <p>Live tier cards generated from your Supabase player data. Minecraft gamemode icons are shown as placeholders for now.</p>
+            <p>This page shows all the player tiers across different Minecraft gamemodes.</p>
         </div>
     </section>
 
     <section class="section">
-        <h2>Active Minecraft Players &amp; Tier Progress</h2>
-        <p class="tier-empty" id="tierSubtitle">Fetching the latest player tiers from Supabase...</p>
+        <h2>Active Minecraft Players &amp; Current Tiers</h2>
+        <p class="tier-empty" id="tierSubtitle">Fetching the latest player tiers from the storage...</p>
         <div id="modeTabs" class="mode-tabs"></div>
         <div id="tierBoard" class="tier-board"></div>
     </section>
@@ -215,6 +215,8 @@ function renderPlayerItem(player, selectedMode) {
 }
 
 function renderTierBoard(players, selectedMode) {
+  tierBoard.classList.toggle('overall-active', selectedMode === 'Overall');
+
   let filtered = players;
   if (selectedMode !== 'Overall') {
     filtered = players.filter(player => {
@@ -256,6 +258,7 @@ function renderTierBoard(players, selectedMode) {
         return `<span class="tier-icon" title="${gamemode}: ${tierValue} — ${tierPoints} pts">${iconContent}</span>`;
       }).join('');
       
+      const region = (player.region || player.Region || player.region?.toString() || 'Unknown').toUpperCase();
       return `
         <article class="ranking-row">
           <div class="ranking-number">${index + 1}.</div>
@@ -264,13 +267,12 @@ function renderTierBoard(players, selectedMode) {
             <div>
               <strong>${ign}</strong>
               <div class="player-category"><i class="${category.icon}"></i> ${category.label}</div>
-              <div class="player-category-desc">${category.description}</div>
             </div>
           </div>
           <div class="ranking-tiers">
             ${tiersHtml}
           </div>
-          <div class="ranking-region">NA</div>
+          <div class="ranking-region">${region}</div>
         </article>
       `;
     }).join('')}</div>`;
