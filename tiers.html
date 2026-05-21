@@ -52,6 +52,46 @@ const modeTabs = document.getElementById('modeTabs');
 const API_BASE_URL = window.location.origin;
 
 const DEFAULT_MODES = ['Overall', 'Vanilla', 'UHC', 'Pot', 'NethOP', 'SMP', 'Sword', 'Axe', 'Mace'];
+const MODE_IMAGE_URLS = {
+  Sword: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9f/Diamond_Sword_%28inventory%29_MCE.png/revision/latest?cb=20210918070719',
+  Axe: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/40/Diamond_Axe_JE3_BE3.png/revision/latest?cb=20200226193844',
+  NethOP: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/cb/Netherite_Helmet_%28item%29_JE2_BE1.png/revision/latest?cb=20200304193908',
+  Pot: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/07/Health_Potion_%28item%29.png/revision/latest?cb=20210401172200',
+  SMP: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7b/Ender_Pearl_JE2_BE1.png/revision/latest?cb=20190501044042',
+  UHC: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/00/Lava_Bucket_JE1_BE1.png/revision/latest?cb=20200128152224',
+  Mace: 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/0f/Mace_%28MCD%29.png/revision/latest?cb=20200531152907'
+};
+
+const TIER_POINTS = {
+  HT1: 60, LT1: 45,
+  HT2: 30, LT2: 20,
+  HT3: 10, LT3: 6,
+  HT4: 4, LT4: 3,
+  HT5: 2, LT5: 1
+};
+
+const RANK_CATEGORIES = [
+  { min: 400, label: 'Combat Grandmaster', icon: 'fa-solid fa-crown', description: 'Obtained 400+ total points.' },
+  { min: 250, label: 'Combat Master', icon: 'fa-solid fa-shield', description: 'Obtained 250+ total points.' },
+  { min: 100, label: 'Combat Ace', icon: 'fa-solid fa-star', description: 'Obtained 100+ total points.' },
+  { min: 50, label: 'Combat Specialist', icon: 'fa-solid fa-bolt', description: 'Obtained 50+ total points.' },
+  { min: 20, label: 'Combat Cadet', icon: 'fa-solid fa-user-graduate', description: 'Obtained 20+ total points.' },
+  { min: 10, label: 'Combat Novice', icon: 'fa-solid fa-user', description: 'Obtained 10+ total points.' },
+  { min: 0, label: 'Rookie', icon: 'fa-solid fa-seedling', description: 'Starting rank for players with less than 10 points.' }
+];
+
+function getModeIconUrl(mode) {
+  const key = String(mode || '').trim().toLowerCase();
+  if (key.includes('sword')) return MODE_IMAGE_URLS.Sword;
+  if (key.includes('axe')) return MODE_IMAGE_URLS.Axe;
+  if (key.includes('neth') || key.includes('helmet')) return MODE_IMAGE_URLS.NethOP;
+  if (key.includes('pot') || key.includes('potion')) return MODE_IMAGE_URLS.Pot;
+  if (key.includes('smp') || key.includes('ender')) return MODE_IMAGE_URLS.SMP;
+  if (key.includes('uhc') || key.includes('lava')) return MODE_IMAGE_URLS.UHC;
+  if (key.includes('mace')) return MODE_IMAGE_URLS.Mace;
+  return null;
+}
+
 const BOARD_TIERS = ['Tier 1', 'Tier 2', 'Tier 3', 'Tier 4', 'Tier 5'];
 const TIER_PRIORITY = [
   'Unranked',
@@ -83,6 +123,27 @@ function getTierArrow(tier) {
   if (/^HT/i.test(tier)) return 'ht';
   if (/^LT/i.test(tier)) return 'lt';
   return 'none';
+}
+
+function getTierArrowIcon(tier) {
+  if (/^HT/i.test(tier)) return '<i class="fa-solid fa-angles-up"></i>';
+  if (/^LT/i.test(tier)) return '<i class="fa-solid fa-angle-up"></i>';
+  return '<i class="fa-solid fa-circle"></i>';
+}
+
+function getPointsForTier(tier) {
+  if (typeof tier !== 'string') return 0;
+  const normalized = tier.replace(/\s+/g, '').toUpperCase();
+  return TIER_POINTS[normalized] || 0;
+}
+
+function getTotalPoints(tiers) {
+  if (!Array.isArray(tiers) || !tiers.length) return 0;
+  return tiers.reduce((sum, tier) => sum + getPointsForTier(tier?.tier), 0);
+}
+
+function getRankCategory(points) {
+  return RANK_CATEGORIES.find(category => points >= category.min) || RANK_CATEGORIES[RANK_CATEGORIES.length - 1];
 }
 
 function truncateUsername(name, maxLength = 7) {
@@ -136,7 +197,7 @@ function renderPlayerItem(player, selectedMode) {
     }) || { tier: 'Unranked', gamemode: selectedMode };
   }
 
-  const arrowClass = getTierArrow(tierItem.tier);
+  const arrowHtml = getTierArrowIcon(tierItem.tier);
   const tierLabel = tierItem.tier || 'Unranked';
   const gamemodeLabel = tierItem.gamemode || selectedMode;
 
@@ -148,7 +209,7 @@ function renderPlayerItem(player, selectedMode) {
           <strong>${displayName}</strong>
         </div>
       </div>
-      <span class="tier-pill"><span class="tier-arrow ${arrowClass}"></span> ${tierLabel}</span>
+      <span class="tier-pill"><span class="tier-arrow">${arrowHtml}</span> ${tierLabel}</span>
     </article>
   `;
 }
@@ -173,22 +234,26 @@ function renderTierBoard(players, selectedMode) {
   if (selectedMode === 'Overall') {
     // Overall tab shows ranked list layout
     filtered.sort((a, b) => {
-      const bestA = getBestTier(Array.isArray(a.tiers) ? a.tiers : []);
-      const bestB = getBestTier(Array.isArray(b.tiers) ? b.tiers : []);
-      return getTierScore(bestB.tier) - getTierScore(bestA.tier);
+      const pointsA = getTotalPoints(Array.isArray(a.tiers) ? a.tiers : []);
+      const pointsB = getTotalPoints(Array.isArray(b.tiers) ? b.tiers : []);
+      if (pointsB !== pointsA) return pointsB - pointsA;
+      return getTierScore(getBestTier(Array.isArray(b.tiers) ? b.tiers : []).tier) - getTierScore(getBestTier(Array.isArray(a.tiers) ? a.tiers : []).tier);
     });
 
     tierBoard.innerHTML = `<div class="overall-ranking">${filtered.map((player, index) => {
       const ign = player.ign || player.name || player.username || 'Unknown Player';
       const tiers = Array.isArray(player.tiers) ? player.tiers : [];
-      const bestTier = getBestTier(tiers);
-      const tierLabel = bestTier.tier || 'Unranked';
-      const arrow = getTierArrow(tierLabel);
-      
+      const totalPoints = getTotalPoints(tiers);
+      const category = getRankCategory(totalPoints);
       const tiersHtml = tiers.slice(0, 8).map(tier => {
         const gamemode = tier?.gamemode || tier?.mode || 'Unknown';
         const tierValue = tier?.tier || 'Unranked';
-        return `<span class="tier-icon" title="${gamemode}: ${tierValue}">⚔</span>`;
+        const iconUrl = getModeIconUrl(gamemode);
+        const tierPoints = getPointsForTier(tierValue);
+        const iconContent = iconUrl
+          ? `<img src="${iconUrl}" alt="${gamemode}" class="tier-icon-img">`
+          : '⚔';
+        return `<span class="tier-icon" title="${gamemode}: ${tierValue} — ${tierPoints} pts">${iconContent}</span>`;
       }).join('');
       
       return `
@@ -198,7 +263,8 @@ function renderTierBoard(players, selectedMode) {
             <img src="https://minotar.net/avatar/${ign}/48" alt="${ign}" class="player-avatar-lg">
             <div>
               <strong>${ign}</strong>
-              <div class="player-info">Combat Master</div>
+              <div class="player-category"><i class="${category.icon}"></i> ${category.label}</div>
+              <div class="player-category-desc">${category.description}</div>
             </div>
           </div>
           <div class="ranking-tiers">

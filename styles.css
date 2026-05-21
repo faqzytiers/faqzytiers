@@ -774,6 +774,8 @@ footer a {
   align-items: center;
   width: 100%;
   margin: 0 auto;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
 }
 
 .ranking-row {
@@ -785,6 +787,8 @@ footer a {
   border-radius: 12px;
   padding: 1rem;
   width: 1000px;
+  min-width: 1000px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -850,6 +854,33 @@ footer a {
   margin-top: 0.2rem;
 }
 
+.player-category {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ffcc66;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
+
+.player-category i {
+  font-size: 1rem;
+}
+
+.player-category-desc {
+  color: #bbb;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+}
+
+.tier-arrow i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
 .ranking-tiers {
   display: flex;
   gap: 0.2rem;
@@ -868,6 +899,14 @@ footer a {
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  overflow: hidden;
+}
+
+.tier-icon img,
+.tier-icon .tier-icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .tier-icon:hover {
