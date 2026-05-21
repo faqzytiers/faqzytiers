@@ -578,6 +578,9 @@ footer a {
   grid-template-columns: repeat(5, minmax(240px, 1fr));
   gap: 1.5rem;
   margin-top: 1rem;
+  max-height: 1000px;
+  overflow: auto;
+  padding-right: 0.5rem;
 }
 
 .tier-column {
@@ -773,8 +776,10 @@ footer a {
   gap: 0.75rem;
   align-items: center;
   width: 100%;
+  max-height: 1000px;
   margin: 0 auto;
   overflow-x: auto;
+  overflow-y: auto;
   padding-bottom: 0.5rem;
 }
 
