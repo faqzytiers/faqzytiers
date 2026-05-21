@@ -85,6 +85,13 @@ function getTierArrow(tier) {
   return '•';
 }
 
+function truncateUsername(name, maxLength = 7) {
+  if (name.length > maxLength) {
+    return name.slice(0, maxLength) + '...';
+  }
+  return name;
+}
+
 function normalizeTierGroup(tier) {
   if (typeof tier !== 'string') return 'Tier 5';
   const numericMatch = tier.match(/^(?:HT|LT)?\s*([1-5])$/i);
@@ -116,6 +123,7 @@ function renderModeTab(name, active = false) {
 
 function renderPlayerItem(player, selectedMode) {
   const ign = player.ign || player.name || player.username || 'Unknown Player';
+  const displayName = truncateUsername(ign);
   const tiers = Array.isArray(player.tiers) ? player.tiers : [];
   let tierItem;
 
@@ -137,7 +145,7 @@ function renderPlayerItem(player, selectedMode) {
       <div class="player-meta">
         <div class="player-avatar">${ign.slice(0, 1).toUpperCase()}</div>
         <div>
-          <strong>${ign}</strong>
+          <strong>${displayName}</strong>
           <div class="player-gamemode">${gamemodeLabel}</div>
         </div>
       </div>
@@ -173,21 +181,30 @@ function renderTierBoard(players, selectedMode) {
 
     tierBoard.innerHTML = `<div class="overall-ranking">${filtered.map((player, index) => {
       const ign = player.ign || player.name || player.username || 'Unknown Player';
-      const bestTier = getBestTier(Array.isArray(player.tiers) ? player.tiers : []);
+      const displayName = truncateUsername(ign);
+      const tiers = Array.isArray(player.tiers) ? player.tiers : [];
+      const bestTier = getBestTier(tiers);
       const tierLabel = bestTier.tier || 'Unranked';
       const arrow = getTierArrow(tierLabel);
+      
+      const tiersHtml = tiers.slice(0, 8).map(tier => {
+        const gamemode = tier?.gamemode || tier?.mode || 'Unknown';
+        const tierValue = tier?.tier || 'Unranked';
+        return `<span class="tier-icon" title="${gamemode}: ${tierValue}">⚔</span>`;
+      }).join('');
+      
       return `
         <article class="ranking-row">
           <div class="ranking-number">${index + 1}.</div>
           <div class="ranking-player">
             <div class="player-avatar-lg">${ign.slice(0, 1).toUpperCase()}</div>
             <div>
-              <strong>${ign}</strong>
+              <strong>${displayName}</strong>
               <div class="player-info">Combat Master</div>
             </div>
           </div>
           <div class="ranking-tiers">
-            ${[0, 1, 2, 3, 4, 5, 6, 7].map(i => `<span class="tier-icon">⚔</span>`).join('')}
+            ${tiersHtml}
           </div>
           <div class="ranking-region">NA</div>
           <span class="tier-pill">${arrow} ${tierLabel}</span>
