@@ -671,6 +671,15 @@ footer a {
   .tier-board {
     grid-template-columns: 1fr;
   }
+  .ranking-tiers {
+    margin: 20px 0;
+  }
+  .ranking-row {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    display: block;
+  }
 }
 
 .tier-card {
