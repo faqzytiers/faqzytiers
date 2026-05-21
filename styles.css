@@ -216,7 +216,6 @@ header {
 .card {
   background: #111;
   border-radius: 8px;
-  overflow: hidden;
   width: 300px;
   text-align: center;
   transition: transform 0.3s;
@@ -873,6 +872,7 @@ footer a {
   color: #ffcc66;
   font-weight: 700;
   margin-top: 0.35rem;
+  gap: 0.4rem;
 }
 
 .player-category i {
