@@ -867,7 +867,6 @@ footer a {
 .player-category {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   color: #ffcc66;
   font-weight: 700;
   margin-top: 0.35rem;

@@ -71,13 +71,13 @@ const TIER_POINTS = {
 };
 
 const RANK_CATEGORIES = [
-  { min: 400, label: 'Combat Grandmaster', icon: 'fa-solid fa-crown', description: 'Obtained 400+ total points.' },
-  { min: 250, label: 'Combat Master', icon: 'fa-solid fa-shield', description: 'Obtained 250+ total points.' },
-  { min: 100, label: 'Combat Ace', icon: 'fa-solid fa-star', description: 'Obtained 100+ total points.' },
-  { min: 50, label: 'Combat Specialist', icon: 'fa-solid fa-bolt', description: 'Obtained 50+ total points.' },
-  { min: 20, label: 'Combat Cadet', icon: 'fa-solid fa-user-graduate', description: 'Obtained 20+ total points.' },
-  { min: 10, label: 'Combat Novice', icon: 'fa-solid fa-user', description: 'Obtained 10+ total points.' },
-  { min: 0, label: 'Rookie', icon: 'fa-solid fa-seedling', description: 'Starting rank for players with less than 10 points.' }
+  { min: 400, label: 'Combat Grandmaster', icon: 'fas fa-crown', description: 'Obtained 400+ total points.' },
+  { min: 250, label: 'Combat Master', icon: 'fas fa-shield', description: 'Obtained 250+ total points.' },
+  { min: 100, label: 'Combat Ace', icon: 'fas fa-star', description: 'Obtained 100+ total points.' },
+  { min: 50, label: 'Combat Specialist', icon: 'fas fa-bolt', description: 'Obtained 50+ total points.' },
+  { min: 20, label: 'Combat Cadet', icon: 'fas fa-user-graduate', description: 'Obtained 20+ total points.' },
+  { min: 10, label: 'Combat Novice', icon: 'fas fa-user', description: 'Obtained 10+ total points.' },
+  { min: 0, label: 'Rookie', icon: 'fas fa-seedling', description: 'Starting rank for players with less than 10 points.' }
 ];
 
 function getModeIconUrl(mode) {
@@ -126,9 +126,9 @@ function getTierArrow(tier) {
 }
 
 function getTierArrowIcon(tier) {
-  if (/^HT/i.test(tier)) return '<i class="fa-solid fa-angles-up"></i>';
-  if (/^LT/i.test(tier)) return '<i class="fa-solid fa-angle-up"></i>';
-  return '<i class="fa-solid fa-circle"></i>';
+  if (/^HT/i.test(tier)) return '<i class="fas fa-angles-up"></i>';
+  if (/^LT/i.test(tier)) return '<i class="fas fa-angle-up"></i>';
+  return '<i class="fas fa-circle"></i>';
 }
 
 function getPointsForTier(tier) {
@@ -228,7 +228,7 @@ function renderTierBoard(players, selectedMode) {
     });
   }
 
-  if (!filtered.length) {
+  if (!filtered.length && selectedMode === 'Overall') {
     tierBoard.innerHTML = '<div class="tier-empty">No players found for this mode.</div>';
     return;
   }
@@ -342,8 +342,6 @@ async function loadTierData() {
       tierBoard.innerHTML = '<div class="tier-empty">No tier data available.</div>';
       return;
     }
-
-    tierSubtitle.textContent = 'Select a mode tab above to view tier groups.';
     setupModeTabs(data);
   } catch (err) {
     console.error('Failed to load player tiers:', err);
