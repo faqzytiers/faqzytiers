@@ -773,6 +773,7 @@ footer a {
   gap: 0.75rem;
   align-items: center;
   width: 100%;
+  margin: 0 auto;
 }
 
 .ranking-row {
@@ -784,6 +785,41 @@ footer a {
   border-radius: 12px;
   padding: 1rem;
   width: 1000px;
+  margin: 0 auto;
+}
+
+.tier-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tier-arrow {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  min-height: 20px;
+  color: #ff6600;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.tier-arrow.ht::before,
+.tier-arrow.ht::after {
+  content: '↑';
+  display: block;
+}
+
+.tier-arrow.lt::before {
+  content: '↑';
+  display: block;
+}
+
+.tier-arrow.none::before {
+  content: '•';
+  display: block;
 }
 
 .ranking-number {

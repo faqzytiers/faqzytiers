@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faqzy Minecraft - Tiers</title>
+    <title>FaqzyTiers - Tiers</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="styles.css">
@@ -11,7 +11,7 @@
 <body>
 <header>
     <nav class="navbar">
-        <div class="logo">Faqzy Minecraft</div>
+        <div class="logo">FaqzyTiers</div>
         <ul class="nav-links" id="navLinks">
             <li><a href="index.html">Home</a></li>
             <li><a href="tiers.html">Tiers</a></li>
@@ -27,7 +27,7 @@
         <div class="hero-fade-bg"></div>
         <div class="overlay"></div>
         <div class="hero-content">
-            <h1>Faqzy Minecraft Tiers</h1>
+            <h1>FaqzyTiers</h1>
             <p>Live tier cards generated from your Supabase player data. Minecraft gamemode icons are shown as placeholders for now.</p>
         </div>
     </section>
@@ -80,9 +80,9 @@ function getBestTier(tiers) {
 }
 
 function getTierArrow(tier) {
-  if (/^HT/i.test(tier)) return '⇈';
-  if (/^LT/i.test(tier)) return '↑';
-  return '•';
+  if (/^HT/i.test(tier)) return 'ht';
+  if (/^LT/i.test(tier)) return 'lt';
+  return 'none';
 }
 
 function truncateUsername(name, maxLength = 7) {
@@ -136,7 +136,7 @@ function renderPlayerItem(player, selectedMode) {
     }) || { tier: 'Unranked', gamemode: selectedMode };
   }
 
-  const arrow = getTierArrow(tierItem.tier);
+  const arrowClass = getTierArrow(tierItem.tier);
   const tierLabel = tierItem.tier || 'Unranked';
   const gamemodeLabel = tierItem.gamemode || selectedMode;
 
@@ -148,7 +148,7 @@ function renderPlayerItem(player, selectedMode) {
           <strong>${displayName}</strong>
         </div>
       </div>
-      <span class="tier-pill">${arrow} ${tierLabel}</span>
+      <span class="tier-pill"><span class="tier-arrow ${arrowClass}"></span> ${tierLabel}</span>
     </article>
   `;
 }
