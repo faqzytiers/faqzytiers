@@ -34,7 +34,6 @@
 
     <section class="section">
         <h2>Active Minecraft Players &amp; Current Tiers</h2>
-        <p class="tier-empty" id="tierSubtitle">Fetching the latest player tiers from the storage...</p>
         <div id="modeTabs" class="mode-tabs"></div>
         <div id="tierBoard" class="tier-board"></div>
     </section>
@@ -239,7 +238,16 @@ function renderTierBoard(players, selectedMode) {
       const pointsA = getTotalPoints(Array.isArray(a.tiers) ? a.tiers : []);
       const pointsB = getTotalPoints(Array.isArray(b.tiers) ? b.tiers : []);
       if (pointsB !== pointsA) return pointsB - pointsA;
-      return getTierScore(getBestTier(Array.isArray(b.tiers) ? b.tiers : []).tier) - getTierScore(getBestTier(Array.isArray(a.tiers) ? a.tiers : []).tier);
+
+      const bestTierA = getBestTier(Array.isArray(a.tiers) ? a.tiers : []).tier;
+      const bestTierB = getBestTier(Array.isArray(b.tiers) ? b.tiers : []).tier;
+      const tierScoreA = getTierScore(bestTierA);
+      const tierScoreB = getTierScore(bestTierB);
+      if (tierScoreB !== tierScoreA) return tierScoreB - tierScoreA;
+
+      const nameA = (a.ign || a.name || a.username || '').toLowerCase();
+      const nameB = (b.ign || b.name || b.username || '').toLowerCase();
+      return nameA.localeCompare(nameB);
     });
 
     tierBoard.innerHTML = `<div class="overall-ranking">${filtered.map((player, index) => {
@@ -255,7 +263,7 @@ function renderTierBoard(players, selectedMode) {
         const iconContent = iconUrl
           ? `<img src="${iconUrl}" alt="${gamemode}" class="tier-icon-img">`
           : '⚔';
-        return `<span class="tier-icon" title="${gamemode}: ${tierValue} — ${tierPoints} pts">${iconContent}</span>`;
+        return `<span class="tier-icon" data-tooltip="${gamemode}: ${tierValue} — ${tierPoints} pts">${iconContent}</span>`;
       }).join('');
       
       const region = (player.region || player.Region || player.region?.toString() || 'Unknown').toUpperCase();
@@ -295,8 +303,27 @@ function renderTierBoard(players, selectedMode) {
       grouped[column].push(player);
     });
 
+    const sortTierPlayers = playersList => playersList.slice().sort((a, b) => {
+      const aTier = (Array.isArray(a.tiers) ? a.tiers : []).find(item => {
+        const modeName = (item?.gamemode || item?.mode || '').toLowerCase();
+        return modeName === selectedMode.toLowerCase();
+      })?.tier || 'Unranked';
+      const bTier = (Array.isArray(b.tiers) ? b.tiers : []).find(item => {
+        const modeName = (item?.gamemode || item?.mode || '').toLowerCase();
+        return modeName === selectedMode.toLowerCase();
+      })?.tier || 'Unranked';
+
+      const scoreA = getTierScore(aTier);
+      const scoreB = getTierScore(bTier);
+      if (scoreB !== scoreA) return scoreB - scoreA;
+      const pointsA = getPointsForTier(aTier);
+      const pointsB = getPointsForTier(bTier);
+      if (pointsB !== pointsA) return pointsB - pointsA;
+      return (a.ign || a.name || a.username || '').localeCompare(b.ign || b.name || b.username || '');
+    });
+
     tierBoard.innerHTML = BOARD_TIERS.map(tierName => {
-      const playersInTier = grouped[tierName];
+      const playersInTier = sortTierPlayers(grouped[tierName]);
       const content = playersInTier.length
         ? playersInTier.map(player => renderPlayerItem(player, selectedMode)).join('')
         : '<div class="no-players">No players in this tier</div>';

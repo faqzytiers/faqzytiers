@@ -908,7 +908,7 @@ footer a {
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .tier-icon img,
@@ -924,12 +924,12 @@ footer a {
   transform: scale(1.1);
 }
 
-.tier-icon[title] {
+.tier-icon[data-tooltip] {
   position: relative;
 }
 
-.tier-icon[title]:hover::after {
-  content: attr(title);
+.tier-icon[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
   position: absolute;
   bottom: 100%;
   left: 50%;
