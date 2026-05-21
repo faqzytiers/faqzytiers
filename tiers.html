@@ -143,10 +143,9 @@ function renderPlayerItem(player, selectedMode) {
   return `
     <article class="tier-player">
       <div class="player-meta">
-        <div class="player-avatar">${ign.slice(0, 1).toUpperCase()}</div>
+        <img src="https://minotar.net/avatar/${ign}/36" alt="${ign}" class="player-avatar">
         <div>
           <strong>${displayName}</strong>
-          <div class="player-gamemode">${gamemodeLabel}</div>
         </div>
       </div>
       <span class="tier-pill">${arrow} ${tierLabel}</span>
@@ -181,7 +180,6 @@ function renderTierBoard(players, selectedMode) {
 
     tierBoard.innerHTML = `<div class="overall-ranking">${filtered.map((player, index) => {
       const ign = player.ign || player.name || player.username || 'Unknown Player';
-      const displayName = truncateUsername(ign);
       const tiers = Array.isArray(player.tiers) ? player.tiers : [];
       const bestTier = getBestTier(tiers);
       const tierLabel = bestTier.tier || 'Unranked';
@@ -197,9 +195,9 @@ function renderTierBoard(players, selectedMode) {
         <article class="ranking-row">
           <div class="ranking-number">${index + 1}.</div>
           <div class="ranking-player">
-            <div class="player-avatar-lg">${ign.slice(0, 1).toUpperCase()}</div>
+            <img src="https://minotar.net/avatar/${ign}/48" alt="${ign}" class="player-avatar-lg">
             <div>
-              <strong>${displayName}</strong>
+              <strong>${ign}</strong>
               <div class="player-info">Combat Master</div>
             </div>
           </div>
@@ -207,7 +205,6 @@ function renderTierBoard(players, selectedMode) {
             ${tiersHtml}
           </div>
           <div class="ranking-region">NA</div>
-          <span class="tier-pill">${arrow} ${tierLabel}</span>
         </article>
       `;
     }).join('')}</div>`;
