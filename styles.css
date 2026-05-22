@@ -686,6 +686,10 @@ footer a {
     max-width: 300px !important;
     display: block !important;
   }
+  .mode-tabs::before {
+  content: '';
+  min-width: 1700px !important;
+}
 }
 
 .tier-card {
