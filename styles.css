@@ -547,10 +547,16 @@ footer a {
 
 .mode-tabs {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
   margin: 1.75rem 0 1rem;
+  overflow: auto;
+  padding: 20px;
+}
+
+.mode-tabs::before {
+  content: '';
+  min-width: 40px;
 }
 
 .mode-tab {
@@ -561,7 +567,7 @@ footer a {
   border-radius: 999px;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 110px;
+  min-width: 130px;
   font-weight: 700;
 }
 
