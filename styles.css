@@ -556,7 +556,7 @@ footer a {
 
 .mode-tabs::before {
   content: '';
-  min-width: 40px;
+  min-width: 450px;
 }
 
 .mode-tab {
